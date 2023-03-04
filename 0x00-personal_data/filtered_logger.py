@@ -5,11 +5,15 @@ Filtered logger file
 import re
 from typing import List
 
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
 
 def filter_datum(
         fields: List[str],
         redaction: str,
         message: str,
         separator: str) -> str:
-    regex_p = re.compile(r'({})=[^{}]*'.format('|'.join(fields), separator))
-    return regex_p.sub(r'\1={}'.format(redaction), message)
+    for field in fields:
+        message = re.sub(field+'=.*?'+separator,
+                         field+'='+redaction+separator, message)
+    return message
