@@ -44,12 +44,14 @@ class BasicAuth(Auth):
     ) -> Tuple[str, str]:
         """Returns user email and password from the Base64 decoded value
         """
-        if not isinstance(decoded_base64_authorization_header, str):
-            return None
-        pattern = r'(?P<user>[^:]+):(?P<password>.+)'
-        match = re.match(pattern, decoded_base64_authorization_header.strip())
-        if match:
-            user = match.group('user')
-            password = match.group('password')
-            return user, password
-        return None
+        if type(decoded_base64_authorization_header) == str:
+            pattern = r'(?P<user>[^:]+):(?P<password>.+)'
+            field_match = re.fullmatch(
+                pattern,
+                decoded_base64_authorization_header.strip(),
+            )
+            if field_match is not None:
+                user = field_match.group('user')
+                password = field_match.group('password')
+                return user, password
+        return None, None
