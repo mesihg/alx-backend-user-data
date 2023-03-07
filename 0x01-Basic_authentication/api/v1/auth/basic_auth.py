@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """ Module of Basic_Auth class
 """
+import re
 from api.v1.auth.auth import Auth
 
 
@@ -13,7 +14,9 @@ class BasicAuth(Auth):
             ) -> str:
         """Returns the Base64 Authorization header for a Basic Authentication
         """
-        if authorization_header is isinstance(authorization_header, str):
-            if authorization_header.startswith("Basic "):
-                return authorization_header.split(" ")[1]
+        if type(authorization_header) == str:
+            pattern = r'Basic (?P<token>.+)'
+            field_match = re.fullmatch(pattern, authorization_header.strip())
+            if field_match is not None:
+                return field_match.group('token')
         return None
