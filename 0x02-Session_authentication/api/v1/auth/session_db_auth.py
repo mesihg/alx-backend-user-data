@@ -34,13 +34,6 @@ class SessionDBAuth(SessionExpAuth):
             sessions = UserSession.search({'session_id': session_id})
         except Exception:
             return None
-        if len(sessions) <= 0:
-            return None
-        cur_time = datetime.now()
-        time_span = timedelta(seconds=self.session_duration)
-        exp_time = sessions[0].created_at + time_span
-        if exp_time < cur_time:
-            return None
         return sessions[0].user_id
 
     def destroy_session(self, request=None) -> bool:
@@ -50,8 +43,6 @@ class SessionDBAuth(SessionExpAuth):
         try:
             sessions = UserSession.search({'session_id': session_id})
         except Exception:
-            return False
-        if len(sessions) <= 0:
             return False
         sessions[0].remove()
         return True
