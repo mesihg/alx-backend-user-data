@@ -3,6 +3,7 @@
 """
 from uuid import uuid4
 from .auth import Auth
+from models.user import User
 
 
 class SessionAuth(Auth):
@@ -23,3 +24,8 @@ class SessionAuth(Auth):
         if isinstance(session_id, str) and session_id is not None:
             return self.user_id_by_session_id.get(session_id)
         return None
+
+    def current_user(self, request=None):
+        """Return User using Session ID"""
+        user_id = self.user_id_for_session_id(self.session_cookie(request))
+        return User.get(user_id)
